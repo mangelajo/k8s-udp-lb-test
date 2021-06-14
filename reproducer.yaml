@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: udp-lb-test
+  labels:
+    app: udp-lb-test
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+spec:
+  externalTrafficPolicy: Local
+  selector:
+    app: udp-lb-test
+  ports:
+    - port: 3000
+      protocol: UDP
+      targetPort: 3000
+      name: udp-port-1
+    - port: 3001
+      protocol: UDP
+      targetPort: 3001
+      name: udp-port-2
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udp-lb-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udp-lb-test
+  template:
+    metadata:
+      labels:
+        app: udp-lb-test
+    spec:
+      containers:
+      - name: udp-lb-test
+        image: quay.io/mangelajo/k8s-udp-lb-test:dev
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: udp-port-1
+          protocol: UDP
+        - containerPort: 3001
+          protocol: UDP
+          name: udp-port-2
+
