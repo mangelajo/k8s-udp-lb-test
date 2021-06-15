@@ -35,6 +35,7 @@ spec:
       labels:
         app: udp-lb-test
     spec:
+      hostNetwork: true
       containers:
       - name: udp-lb-test
         image: quay.io/mangelajo/k8s-udp-lb-test:dev
